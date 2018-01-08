@@ -22,6 +22,8 @@ int main(int argc, char** argv)
 
 	//..........
 	while(ret != MYSHELL_FCT_EXIT)
+	//int i=0;
+	//while(i==0)
 	{
 		//Get your session info
         infos=getpwuid(getuid());
@@ -34,12 +36,14 @@ int main(int argc, char** argv)
 
         cmd *command = malloc(sizeof(cmd));
         parseMembers(readlineptr,command);
+        freeCmd(command);
+        free(command);
+        free(readlineptr);
         //Your code goes here.......
         //Parse the comand
         //Execute the comand
         //Clean the house
         //..........
-
 	}
 	//..........
 	return 0;

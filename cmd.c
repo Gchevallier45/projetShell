@@ -79,7 +79,7 @@ void parseMembers(char *inputString,cmd *cmd){
                 while(*member == ' ') //Delete spaces
                     member++;
                 size_t substrSize = strlen(member);
-                cmd->redirection[i][0] = malloc(substrSize*sizeof(char));
+                cmd->redirection[i][0] = malloc((substrSize+1)*sizeof(char));
                 strcpy(cmd->redirection[i][0],member);
                 printf ("[%d][%d] = %s\n",i,0,cmd->redirection[i][0]);
                 break;
@@ -99,7 +99,7 @@ void parseMembers(char *inputString,cmd *cmd){
                     while(*member == ' ') //Delete spaces
                         member++;
                     size_t substrSize = strlen(member);
-                    cmd->redirection[i][2] = malloc(substrSize*sizeof(char));
+                    cmd->redirection[i][2] = malloc((substrSize+1)*sizeof(char));
                     strcpy(cmd->redirection[i][2],member);
                     printf ("[%d][%d] = %s\n",i,2,cmd->redirection[i][2]);
                 }
@@ -117,7 +117,7 @@ void parseMembers(char *inputString,cmd *cmd){
                     while(*member == ' ') //Delete spaces
                         member++;
                     size_t substrSize = strlen(member);
-                    cmd->redirection[i][1] = malloc(substrSize*sizeof(char));
+                    cmd->redirection[i][1] = malloc((substrSize+1)*sizeof(char));
                     strcpy(cmd->redirection[i][1],member);
                     printf ("[%d][%d] = %s\n",i,1,cmd->redirection[i][1]);
                 }
@@ -130,5 +130,31 @@ void parseMembers(char *inputString,cmd *cmd){
 
 //Frees memory associated to a cmd
 void freeCmd(cmd  * cmd){
+    free(cmd->initCmd);
 
+    for(int i=0;i<cmd->nbCmdMembers;i++){
+
+        //free memberArgs
+        for(int j=0;j<cmd->nbMembersArgs[i];j++)
+            free(cmd->cmdMembersArgs[i][j]);
+
+        //free redirection
+        for(int j=0;j<3;j++){
+            if(cmd->redirection[i][j]!=NULL)
+                free(cmd->redirection[i][j]);
+        }
+
+        if(cmd->redirectionType[i]!=NULL)
+            free(cmd->redirectionType[i]);
+
+        free(cmd->cmdMembers[i]);
+        free(cmd->cmdMembersArgs[i]);
+        free(cmd->redirection[i]);
+    }
+
+    free(cmd->cmdMembers);
+    free(cmd->cmdMembersArgs);
+    free(cmd->redirection);
+    free(cmd->nbMembersArgs);
+    free(cmd->redirectionType);
 }
