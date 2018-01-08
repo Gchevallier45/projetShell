@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include "shell_fct.h"
 
+//sudo apt-get install libreadline-dev
+
 //To complete
 int main(int argc, char** argv)
 {
@@ -28,13 +30,16 @@ int main(int argc, char** argv)
         //Print it to the console
 		sprintf(str, "\n{myshell}%s@%s:%s$ ", infos->pw_name, hostname, workingdirectory);
 		readlineptr = readline(str);
-        printf("testy");
+        //printf("testy");
+
+        cmd *command = malloc(sizeof(cmd));
+        parseMembers(readlineptr,command);
         //Your code goes here.......
         //Parse the comand
         //Execute the comand
         //Clean the house
         //..........
-        
+
 	}
 	//..........
 	return 0;
