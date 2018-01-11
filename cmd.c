@@ -36,6 +36,7 @@ void parseMembers(char *inputString,cmd *cmd){
 
         //Split members into args
         printf("\nSPLIT MEMBERS \n");
+        printf("befor %d\n",cmd->nbCmdMembers);
         cmd->nbMembersArgs = malloc(cmd->nbCmdMembers*sizeof(unsigned int));
         cmd->cmdMembersArgs = malloc(cmd->nbCmdMembers*sizeof(char**));
         for(int i=0;i<cmd->nbCmdMembers;i++){
@@ -139,10 +140,10 @@ void freeCmd(cmd  * cmd){
             free(cmd->cmdMembersArgs[i][j]);
 
         //free redirection
-        for(int j=0;j<3;j++){
+        /*for(int j=0;j<3;j++){
             if(cmd->redirection[i][j]!=NULL)
                 free(cmd->redirection[i][j]);
-        }
+        }*/
 
         if(cmd->redirectionType[i]!=NULL)
             free(cmd->redirectionType[i]);

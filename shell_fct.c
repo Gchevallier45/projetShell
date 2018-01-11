@@ -1,6 +1,37 @@
 #include "shell_fct.h"
 
 int exec_command(cmd* my_cmd){
-    //Your implementation comes here
-    return 0; //your return code goes here
+    pid_t pid;
+    int tube[2];
+    char **currentMember;
+    int in = 0;
+    //printf("befor %d\n",my_cmd->nbCmdMembers);
+
+    for(int i=0; i<my_cmd->nbCmdMembers-1;i++){ // Loop for command members to execute with pipes and fork (n-1 members)
+        currentMember = my_cmd->cmdMembersArgs[i];
+        pipe(tube);
+        pid = fork();
+        if(pid == 0){ //Child process
+            if(i!=0){
+                dup2(in,0);
+                close(in); //Close pipe output (to open entry)
+            }
+            dup2(tube[1],1);
+            execvp(currentMember[0], currentMember);
+
+        }
+        else if(pid == -1){
+            printf("FATAL ERROR : fork() failed\n");
+        }
+
+        wait(pid);
+        close(tube[1]); //Close pipe entry (to open output)
+        in=tube[0]; //Store the output of the old pipe to reuse it on the next pipe
+    }
+
+    currentMember = my_cmd->cmdMembersArgs[my_cmd->nbCmdMembers-1];
+    dup2(in, 0);
+    return execvp(currentMember[0], currentMember);
+
+    //return 0; //your return code goes here
 }

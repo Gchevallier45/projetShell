@@ -36,6 +36,7 @@ int main(int argc, char** argv)
 
         cmd *command = malloc(sizeof(cmd));
         parseMembers(readlineptr,command);
+        exec_command(command);
         freeCmd(command);
         free(command);
         free(readlineptr);

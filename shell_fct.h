@@ -1,4 +1,5 @@
 #include "cmd.h"
+#include <unistd.h>
 //Your imports come here
 
 //Terminate shell
