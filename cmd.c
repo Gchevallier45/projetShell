@@ -125,7 +125,7 @@ void parseMembers(char *inputString,cmd *cmd){
                 break;
             }
         }
-
+    printf("\n");
     }
 }
 

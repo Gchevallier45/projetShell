@@ -22,8 +22,6 @@ int main(int argc, char** argv)
 
 	//..........
 	while(ret != MYSHELL_FCT_EXIT)
-	//int i=0;
-	//while(i==0)
 	{
 		//Get your session info
         infos=getpwuid(getuid());
@@ -36,7 +34,12 @@ int main(int argc, char** argv)
 
         cmd *command = malloc(sizeof(cmd));
         parseMembers(readlineptr,command);
-        exec_command(command);
+
+        ret = exec_command(command);
+        if(ret == -1){
+            printf("ERROR : \"%s\" is not a valid command or a valid executable",command->initCmd);
+        }
+
         freeCmd(command);
         free(command);
         free(readlineptr);
