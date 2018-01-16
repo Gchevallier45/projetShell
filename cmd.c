@@ -140,10 +140,12 @@ void freeCmd(cmd  * cmd){
             free(cmd->cmdMembersArgs[i][j]);
 
         //free redirection
-        /*for(int j=0;j<3;j++){
-            if(cmd->redirection[i][j]!=NULL)
+        for(int j=0;j<3;j++){
+            if(cmd->redirection[i][j]!=NULL){
+                //printf("%s\n",cmd->redirection[i][j]);
                 free(cmd->redirection[i][j]);
-        }*/
+            }
+        }
 
         if(cmd->redirectionType[i]!=NULL)
             free(cmd->redirectionType[i]);

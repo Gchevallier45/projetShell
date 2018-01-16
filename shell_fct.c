@@ -8,7 +8,7 @@ int exec_command(cmd* my_cmd){
     int in = 0;
     //printf("befor %d\n",my_cmd->nbCmdMembers);
 
-    for(int i=0; i<my_cmd->nbCmdMembers;i++){ // Loop for command members to execute with pipes and fork (n-1 members)
+    for(int i=0; i<my_cmd->nbCmdMembers;i++){ // Loop for command members to execute with pipes and fork (n members)
         currentMember = my_cmd->cmdMembersArgs[i];
         pipe(tube);
         pid = fork();
@@ -25,8 +25,7 @@ int exec_command(cmd* my_cmd){
         else if(pid == -1){
             printf("FATAL ERROR : fork() failed\n");
         }
-
-        wait(pid);
+        wait(&pid);
         close(tube[1]); //Close pipe entry (to open output)
         in=tube[0]; //Store the output of the old pipe to reuse it on the next pipe
     }
