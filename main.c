@@ -32,16 +32,18 @@ int main(int argc, char** argv)
 		readlineptr = readline(str);
         //printf("testy");
 
-        cmd *command = malloc(sizeof(cmd));
-        parseMembers(readlineptr,command);
+        if(strlen(readlineptr) != 0){
+            cmd *command = malloc(sizeof(cmd));
+            parseMembers(readlineptr,command);
 
-        ret = exec_command(command);
-        if(ret == -1){
-            printf("ERROR : \"%s\" is not a valid command or a valid executable",command->initCmd);
+            ret = exec_command(command);
+            if(ret == -1){
+                printf("ERROR : \"%s\" is not a valid command or a valid executable",command->initCmd);
+            }
+
+            freeCmd(command);
+            free(command);
         }
-
-        freeCmd(command);
-        free(command);
         free(readlineptr);
         //Your code goes here.......
         //Parse the comand

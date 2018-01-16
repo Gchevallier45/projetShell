@@ -14,7 +14,7 @@ void parseMembers(char *inputString,cmd *cmd){
         strcpy(cmd->initCmd,inputString);
 
         //Split string into members
-        printf("\nSPLIT STRING \n");
+        printf("||||||||||||PARSER||||||||||||\nSPLIT STRING \n");
         cmd->nbCmdMembers = 0;
         cmd->cmdMembers = malloc(cmd->nbCmdMembers*sizeof(char*));
 
@@ -36,7 +36,6 @@ void parseMembers(char *inputString,cmd *cmd){
 
         //Split members into args
         printf("\nSPLIT MEMBERS \n");
-        printf("befor %d\n",cmd->nbCmdMembers);
         cmd->nbMembersArgs = malloc(cmd->nbCmdMembers*sizeof(unsigned int));
         cmd->cmdMembersArgs = malloc(cmd->nbCmdMembers*sizeof(char**));
         for(int i=0;i<cmd->nbCmdMembers;i++){
@@ -44,7 +43,7 @@ void parseMembers(char *inputString,cmd *cmd){
             cmd->cmdMembersArgs[i] = malloc((cmd->nbMembersArgs[i]+1)*sizeof(char*)); //+1 to have NULL at the end of array
 
             char *tmpCmdMember = malloc((strlen(cmd->cmdMembers[i])+1)*sizeof(char));
-            strcpy(tmpCmdMember,cmd->cmdMembers[i]);
+            strcpy(tmpCmdMember,cmd->cmdMembers[i]); //Copy for strtok
             substr = strtok (tmpCmdMember," ");
             while (substr != NULL && *substr != '<' && *substr != '>' && *substr != '2')
             {
@@ -59,6 +58,7 @@ void parseMembers(char *inputString,cmd *cmd){
                 substr = substrInit;
                 substr = strtok (NULL, " ");
             }
+            cmd->cmdMembersArgs[i][cmd->nbMembersArgs[i]]=NULL;
             free(tmpCmdMember);
         }
 
@@ -69,6 +69,9 @@ void parseMembers(char *inputString,cmd *cmd){
         for(int i=0;i<cmd->nbCmdMembers;i++){
             cmd->redirection[i] = malloc(3*sizeof(char*));
             cmd->redirectionType[i] = malloc(3*sizeof(int));
+            cmd->redirection[i][0] = malloc(0*sizeof(char));
+            cmd->redirection[i][1] = malloc(0*sizeof(char));
+            cmd->redirection[i][2] = malloc(0*sizeof(char));
             char *member = cmd->cmdMembers[i];
             while(*member != '\0' && *member!= '<' && *member != '>'){
                 member++;
@@ -80,7 +83,7 @@ void parseMembers(char *inputString,cmd *cmd){
                 while(*member == ' ') //Delete spaces
                     member++;
                 size_t substrSize = strlen(member);
-                cmd->redirection[i][0] = malloc((substrSize+1)*sizeof(char));
+                cmd->redirection[i][0] = realloc(cmd->redirection[i][0],(substrSize+1)*sizeof(char));//malloc((substrSize+1)*sizeof(char));
                 strcpy(cmd->redirection[i][0],member);
                 printf ("[%d][%d] = %s\n",i,0,cmd->redirection[i][0]);
                 break;
@@ -100,7 +103,7 @@ void parseMembers(char *inputString,cmd *cmd){
                     while(*member == ' ') //Delete spaces
                         member++;
                     size_t substrSize = strlen(member);
-                    cmd->redirection[i][2] = malloc((substrSize+1)*sizeof(char));
+                    cmd->redirection[i][2] = realloc(cmd->redirection[i][2],(substrSize+1)*sizeof(char));//malloc((substrSize+1)*sizeof(char));
                     strcpy(cmd->redirection[i][2],member);
                     printf ("[%d][%d] = %s\n",i,2,cmd->redirection[i][2]);
                 }
@@ -118,14 +121,14 @@ void parseMembers(char *inputString,cmd *cmd){
                     while(*member == ' ') //Delete spaces
                         member++;
                     size_t substrSize = strlen(member);
-                    cmd->redirection[i][1] = malloc((substrSize+1)*sizeof(char));
+                    cmd->redirection[i][1] = realloc(cmd->redirection[i][1],(substrSize+1)*sizeof(char));//malloc((substrSize+1)*sizeof(char));
                     strcpy(cmd->redirection[i][1],member);
                     printf ("[%d][%d] = %s\n",i,1,cmd->redirection[i][1]);
                 }
                 break;
             }
         }
-    printf("\n");
+    printf("||||||||||||||||||||||||||||||\n\n");
     }
 }
 
@@ -141,10 +144,10 @@ void freeCmd(cmd  * cmd){
 
         //free redirection
         for(int j=0;j<3;j++){
-            if(cmd->redirection[i][j]!=NULL){
+            //if(cmd->redirection[i][j]!=NULL){
                 //printf("%s\n",cmd->redirection[i][j]);
                 free(cmd->redirection[i][j]);
-            }
+            //}
         }
 
         if(cmd->redirectionType[i]!=NULL)
