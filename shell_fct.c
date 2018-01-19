@@ -1,8 +1,13 @@
 #include "shell_fct.h"
 
+pid_t pid;
+
+void alarmEvent(){
+    kill(pid, SIGKILL);
+}
+
 int exec_command_with_fork(cmd* my_cmd){
-    pid_t pid;
-    int tube[2];
+    int tube[2],status;
     char **currentMember;
 
     int in,out;
@@ -63,7 +68,7 @@ int exec_command_with_fork(cmd* my_cmd){
         if(pid == 0){ //Child process
             if(in!=0){
                 printf("connect\n");
-                dup2(in,0); //Connect old pipe/file output to stdin
+                dup2(in,0); //Connect old pipe output to stdin
                 close(in); //Close old pipe output (to open entry)
             }
             if(i!=my_cmd->nbCmdMembers-1){
@@ -80,7 +85,13 @@ int exec_command_with_fork(cmd* my_cmd){
         else if(pid == -1){
             printf("FATAL ERROR : fork() failed\n");
         }
-        wait(&pid);
+
+        signal(SIGALRM,alarmEvent);
+
+        alarm(5);
+
+        //wait(&pid);
+        waitpid(pid,&status,0);
         printf("yolo\n");
         close(tube[1]); //Close current pipe entry (to open output)
         in=tube[0]; //Store the output of the current pipe to reuse it on the next pipe
