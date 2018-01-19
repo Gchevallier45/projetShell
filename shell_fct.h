@@ -1,5 +1,6 @@
 #include "cmd.h"
 #include <unistd.h>
+#include <fcntl.h>
 //Your imports come here
 
 //Terminate shell
