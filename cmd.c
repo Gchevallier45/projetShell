@@ -5,7 +5,7 @@ void printCmd(cmd *cmd){
 	printf("%s",cmd->initCmd);
 }
 
-//Initializes the initial_cmd, membres_cmd et nb_membres fields
+//Initializes the initial_cmd, membres_cmd and nb_membres fields
 void parseMembers(char *inputString,cmd *cmd){
     if(inputString != NULL){
         //Copy raw string
@@ -83,18 +83,17 @@ void parseMembers(char *inputString,cmd *cmd){
             switch(*member){
             case '<': //Redirect STDIN
                 member++;
-                while(*member == ' ') //Delete spaces
+                while(*member == ' ') //Delete spaces before text
                     member++;
                 size_t substrSize = strlen(member);
-
-                /*char *endmember = member + substrSize;
-                while(*endmember == ' '){ //Delete spaces
+                char *endmember = member + substrSize -1;
+                while(*endmember == ' '){ //Delete spaces after text
                     endmember--;
-                    printf("deleted space");
-                }*/
+                }
 
-                cmd->redirection[i][0] = realloc(cmd->redirection[i][0],(substrSize+1)*sizeof(char));
-                strcpy(cmd->redirection[i][0],member);
+                cmd->redirection[i][0] = realloc(cmd->redirection[i][0],(endmember-member+2)*sizeof(char));
+                strncpy(cmd->redirection[i][0],member,endmember-member+1);
+                cmd->redirection[i][0][endmember-member+1] = '\0';
                 printf ("[%d][%d] = %s\n",i,0,cmd->redirection[i][0]);
                 break;
             case '>': //Redirect STDOUT OR STDERR
@@ -110,11 +109,18 @@ void parseMembers(char *inputString,cmd *cmd){
                         cmd->redirectionType[i][2] = OVERRIDE;
                         printf("override\n");
                     }
-                    while(*member == ' ') //Delete spaces
+
+                    while(*member == ' ') //Delete spaces before text
                         member++;
                     size_t substrSize = strlen(member);
-                    cmd->redirection[i][2] = realloc(cmd->redirection[i][2],(substrSize+1)*sizeof(char));
-                    strcpy(cmd->redirection[i][2],member);
+                    char *endmember = member + substrSize -1;
+                    while(*endmember == ' '){ //Delete spaces after text
+                        endmember--;
+                    }
+
+                    cmd->redirection[i][2] = realloc(cmd->redirection[i][2],(endmember-member+2)*sizeof(char));
+                    strncpy(cmd->redirection[i][2],member,endmember-member+1);
+                    cmd->redirection[i][2][endmember-member+1] = '\0';
                     printf ("[%d][%d] = %s\n",i,2,cmd->redirection[i][2]);
                     printf ("[%d][%d] = %d\n",i,2,cmd->redirectionType[i][2]);
                 }
@@ -129,11 +135,18 @@ void parseMembers(char *inputString,cmd *cmd){
                         cmd->redirectionType[i][1] = OVERRIDE;
                         printf("override\n");
                     }
-                    while(*member == ' ') //Delete spaces
+
+                    while(*member == ' ') //Delete spaces before text
                         member++;
                     size_t substrSize = strlen(member);
-                    cmd->redirection[i][1] = realloc(cmd->redirection[i][1],(substrSize+1)*sizeof(char));
-                    strcpy(cmd->redirection[i][1],member);
+                    char *endmember = member + substrSize -1;
+                    while(*endmember == ' '){ //Delete spaces after text
+                        endmember--;
+                    }
+
+                    cmd->redirection[i][1] = realloc(cmd->redirection[i][1],(endmember-member+2)*sizeof(char));
+                    strncpy(cmd->redirection[i][1],member,endmember-member+1);
+                    cmd->redirection[i][1][endmember-member+1] = '\0';
                     printf ("[%d][%d] = %s\n",i,1,cmd->redirection[i][1]);
                     printf ("[%d][%d] = %d\n",i,1,cmd->redirectionType[i][1]);
                 }

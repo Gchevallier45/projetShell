@@ -2,10 +2,12 @@
 
 pid_t pid;
 
+//Watchdog
 void alarmEvent(){
     kill(pid, SIGKILL);
 }
 
+//Execute a list of commands with pipes and forks
 int exec_command_with_fork(cmd* my_cmd){
     int **tube;
     char **currentMember;
@@ -28,8 +30,6 @@ int exec_command_with_fork(cmd* my_cmd){
         switch(my_cmd->redirectionType[my_cmd->nbCmdMembers-1][1]){
         case APPEND:
             out = open(my_cmd->redirection[my_cmd->nbCmdMembers-1][1],O_CREAT|O_APPEND|O_WRONLY,permissions);
-            /*if(out < 0)
-                out = open(my_cmd->redirection[my_cmd->nbCmdMembers-1][1],O_CREAT|O_WRONLY,S_IWUSR|S_IRUSR);*/
             break;
 
         case OVERRIDE:
@@ -46,8 +46,6 @@ int exec_command_with_fork(cmd* my_cmd){
         switch(my_cmd->redirectionType[my_cmd->nbCmdMembers-1][2]){
         case APPEND:
             out = open(my_cmd->redirection[my_cmd->nbCmdMembers-1][2],O_CREAT|O_APPEND|O_WRONLY,permissions);
-            /*if(out < 0)
-                out = open(my_cmd->redirection[my_cmd->nbCmdMembers-1][2],O_CREAT|O_WRONLY,S_IWUSR|S_IRUSR);*/
             break;
 
         case OVERRIDE:
@@ -132,6 +130,7 @@ int exec_command_with_fork(cmd* my_cmd){
     }
 }
 
+// Main function for command execution
 int exec_command(cmd* my_cmd){
     printf("COMMAND OUTPUT : (on pid %d)\n-------------------------------\n",getpid());
     if(strcmp(my_cmd->initCmd,"exit") == 0){ //If command is exit, close the shell
