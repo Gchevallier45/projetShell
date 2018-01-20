@@ -45,7 +45,8 @@ void parseMembers(char *inputString,cmd *cmd){
             char *tmpCmdMember = malloc((strlen(cmd->cmdMembers[i])+1)*sizeof(char));
             strcpy(tmpCmdMember,cmd->cmdMembers[i]); //Copy for strtok
             substr = strtok (tmpCmdMember," ");
-            while (substr != NULL && *substr != '<' && *substr != '>' && *substr != '2')
+
+            while (substr != NULL && *substr != '<' && *substr != '>' && !(*substr == '2' && *(substr+1) == '>'))
             {
                 cmd->nbMembersArgs[i]++;
                 cmd->cmdMembersArgs[i] = realloc(cmd->cmdMembersArgs[i],(cmd->nbMembersArgs[i]+1)*sizeof(char*));
@@ -58,6 +59,7 @@ void parseMembers(char *inputString,cmd *cmd){
                 substr = substrInit;
                 substr = strtok (NULL, " ");
             }
+
             cmd->cmdMembersArgs[i][cmd->nbMembersArgs[i]]=NULL;
             free(tmpCmdMember);
         }
@@ -69,10 +71,11 @@ void parseMembers(char *inputString,cmd *cmd){
         for(int i=0;i<cmd->nbCmdMembers;i++){
             cmd->redirection[i] = malloc(3*sizeof(char*));
             cmd->redirectionType[i] = malloc(3*sizeof(int));
-            cmd->redirection[i][0] = strdup("");//malloc(1*sizeof(char));
-            cmd->redirection[i][1] = strdup("");//malloc(1*sizeof(char));
-            cmd->redirection[i][2] = strdup("");//malloc(1*sizeof(char));
+            cmd->redirection[i][0] = strdup("");
+            cmd->redirection[i][1] = strdup("");
+            cmd->redirection[i][2] = strdup("");
             char *member = cmd->cmdMembers[i];
+
             while(*member != '\0' && *member!= '<' && *member != '>'){
                 member++;
             }
@@ -83,7 +86,14 @@ void parseMembers(char *inputString,cmd *cmd){
                 while(*member == ' ') //Delete spaces
                     member++;
                 size_t substrSize = strlen(member);
-                cmd->redirection[i][0] = realloc(cmd->redirection[i][0],(substrSize+1)*sizeof(char));//malloc((substrSize+1)*sizeof(char));
+
+                /*char *endmember = member + substrSize;
+                while(*endmember == ' '){ //Delete spaces
+                    endmember--;
+                    printf("deleted space");
+                }*/
+
+                cmd->redirection[i][0] = realloc(cmd->redirection[i][0],(substrSize+1)*sizeof(char));
                 strcpy(cmd->redirection[i][0],member);
                 printf ("[%d][%d] = %s\n",i,0,cmd->redirection[i][0]);
                 break;
@@ -93,17 +103,17 @@ void parseMembers(char *inputString,cmd *cmd){
                     if(*member == '>'){ // Append
                         member+=2;
                         cmd->redirectionType[i][2] = APPEND;
-                        printf("append");
+                        printf("append\n");
                     }
                     else{ // Overwrite
                         member++;
                         cmd->redirectionType[i][2] = OVERRIDE;
-                        printf("override");
+                        printf("override\n");
                     }
                     while(*member == ' ') //Delete spaces
                         member++;
                     size_t substrSize = strlen(member);
-                    cmd->redirection[i][2] = realloc(cmd->redirection[i][2],(substrSize+1)*sizeof(char));//malloc((substrSize+1)*sizeof(char));
+                    cmd->redirection[i][2] = realloc(cmd->redirection[i][2],(substrSize+1)*sizeof(char));
                     strcpy(cmd->redirection[i][2],member);
                     printf ("[%d][%d] = %s\n",i,2,cmd->redirection[i][2]);
                     printf ("[%d][%d] = %d\n",i,2,cmd->redirectionType[i][2]);
@@ -112,17 +122,17 @@ void parseMembers(char *inputString,cmd *cmd){
                     if(*member == '>'){ // Append
                         member+=2;
                         cmd->redirectionType[i][1] = APPEND;
-                        printf("append");
+                        printf("append\n");
                     }
                     else{ // Overwrite
                         member++;
                         cmd->redirectionType[i][1] = OVERRIDE;
-                        printf("override");
+                        printf("override\n");
                     }
                     while(*member == ' ') //Delete spaces
                         member++;
                     size_t substrSize = strlen(member);
-                    cmd->redirection[i][1] = realloc(cmd->redirection[i][1],(substrSize+1)*sizeof(char));//malloc((substrSize+1)*sizeof(char));
+                    cmd->redirection[i][1] = realloc(cmd->redirection[i][1],(substrSize+1)*sizeof(char));
                     strcpy(cmd->redirection[i][1],member);
                     printf ("[%d][%d] = %s\n",i,1,cmd->redirection[i][1]);
                     printf ("[%d][%d] = %d\n",i,1,cmd->redirectionType[i][1]);
@@ -146,10 +156,7 @@ void freeCmd(cmd  * cmd){
 
         //free redirection
         for(int j=0;j<3;j++){
-            //if(cmd->redirection[i][j]!=NULL){
-                //printf("%s\n",cmd->redirection[i][j]);
                 free(cmd->redirection[i][j]);
-            //}
         }
 
         if(cmd->redirectionType[i]!=NULL)

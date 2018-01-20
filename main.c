@@ -30,7 +30,6 @@ int main(int argc, char** argv)
         //Print it to the console
 		sprintf(str, "\n{myshell}%s@%s:%s$ ", infos->pw_name, hostname, workingdirectory);
 		readlineptr = readline(str);
-        //printf("testy");
 
         if(strlen(readlineptr) != 0){
             cmd *command = malloc(sizeof(cmd));
