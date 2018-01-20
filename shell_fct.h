@@ -1,7 +1,7 @@
 #include "cmd.h"
 #include <unistd.h>
 #include <fcntl.h>
-#include <sys/wait.h>|
+#include <sys/wait.h>
 //Your imports come here
 
 //Terminate shell
