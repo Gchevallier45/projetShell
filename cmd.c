@@ -5,7 +5,7 @@ void printCmd(cmd *cmd){
 	printf("%s",cmd->initCmd);
 }
 
-//Initializes the initial_cmd, membres_cmd and nb_membres fields
+//Parse the command
 void parseMembers(char *inputString,cmd *cmd){
     if(inputString != NULL){
         //Copy raw string
@@ -14,7 +14,7 @@ void parseMembers(char *inputString,cmd *cmd){
         strcpy(cmd->initCmd,inputString);
 
         //Split string into members
-        printf("||||||||||||PARSER||||||||||||\nSPLIT STRING \n");
+        printf("|||||||||||- PARSER -||||||||||\nSPLIT STRING \n");
         cmd->nbCmdMembers = 0;
         cmd->cmdMembers = malloc(cmd->nbCmdMembers*sizeof(char*));
 
@@ -153,7 +153,7 @@ void parseMembers(char *inputString,cmd *cmd){
                 break;
             }
         }
-    printf("||||||||||||||||||||||||||||||\n\n");
+        printf("|||||||||||||||||||||||||||||||\n\n");
     }
 }
 

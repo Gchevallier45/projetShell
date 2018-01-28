@@ -1,6 +1,6 @@
 #include "shell_fct.h"
 
-pid_t pid;
+pid_t pid; //Store the current PID
 
 //Watchdog
 void alarmEvent(){
@@ -9,11 +9,11 @@ void alarmEvent(){
 
 //Execute a list of commands with pipes and forks
 int exec_command_with_fork(cmd* my_cmd){
-    int **tube;
-    char **currentMember;
-    int in = 0;
-    int out = 0;
-    int status;
+    int **tube; //2D array to store pipes
+    char **currentMember; //Pointer to the current member processed
+    int in = 0; //File descriptor for input redirection
+    int out = 0; //File descriptor four output redirection
+    int status; //Status returned by the last command
 
     tube = malloc(my_cmd->nbCmdMembers*sizeof(int*));
 
@@ -66,18 +66,19 @@ int exec_command_with_fork(cmd* my_cmd){
         pid = fork();
 
         if(pid == 0){ //Child process
-            if(i>0){
+
+            if(i>0){ //If the current processed command is not the first one, connect previous pipe output to the current command input
                 close(tube[i-1][1]);
-                dup2(tube[i-1][0],0);
+                dup2(tube[i-1][0],0); //pipe to stdin
                 close(tube[i-1][0]);
             }
             else if(in != 0){ //file to stdin redirection
-                dup2(in,0);
+                dup2(in,0); //file to stdin
             }
 
-            if(i<my_cmd->nbCmdMembers-1){
+            if(i<my_cmd->nbCmdMembers-1){ //If the current processed command is not the last one, connect current command output to the pipe input
                 close(tube[i][0]);
-                dup2(tube[i][1],1);
+                dup2(tube[i][1],1); //stdout to pipe
                 close(tube[i][1]);
             }
             else if(out != 0){ //stdout redirection to file
@@ -87,24 +88,25 @@ int exec_command_with_fork(cmd* my_cmd){
             execvp(currentMember[0], currentMember);
             exit(-1); //If there is an error we exit from the child
         }
-        else if(pid == -1){
+        else if(pid == -1){ //If fork() failed, a message is displayed
             printf("FATAL ERROR : fork() failed\n");
             return -2;
         }
 
-        if(i > 0)
-		{
+        if(i > 0){ //Close used pipes
 			close(tube[i-1][0]);
 			close(tube[i-1][1]);
 		}
 
     }
 
+    //Set a timeout of 5 seconds
     signal(SIGALRM,alarmEvent);
     alarm(5);
 
     waitpid(pid,&status,0);
 
+    //Close redirection file descriptors
     if(in!=0)
         close(in);
 
@@ -120,7 +122,7 @@ int exec_command_with_fork(cmd* my_cmd){
 
     switch(status){
         case 0: //Command executed successfully
-            return 0;
+            return MYSHELL_CMD_OK;
             break;
         case 9: //Timeout error
             return -2;
@@ -133,7 +135,8 @@ int exec_command_with_fork(cmd* my_cmd){
 // Main function for command execution
 int exec_command(cmd* my_cmd){
     printf("COMMAND OUTPUT : (on pid %d)\n-------------------------------\n",getpid());
-    if(strcmp(my_cmd->initCmd,"exit") == 0){ //If command is exit, close the shell
+
+    if(strcmp(my_cmd->initCmd,"exit") == 0){ //If command is "exit", close the shell
         return MYSHELL_FCT_EXIT;
     }
     else if(strcmp(my_cmd->cmdMembersArgs[0][0],"cd") == 0){ //If command id cd, change directory
