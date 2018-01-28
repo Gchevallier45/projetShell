@@ -1,5 +1,6 @@
 #include <pwd.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,14 +28,19 @@ int main(int argc, char** argv)
 
         //Print it to the console
 		sprintf(str, "\n{myshell}%s@%s:%s$ ", infos->pw_name, hostname, workingdirectory);
+
+		//Read command typed by user
 		readlineptr = readline(str);
 
 		//If a command is typed
         if(strlen(readlineptr) != 0){
+            //Add this command to command history
+            add_history(readlineptr);
 
             //The command is processed
             cmd *command = malloc(sizeof(cmd));
             parseMembers(readlineptr,command);
+            printCmd(command);
 
             //Then the command is executed
             ret = exec_command(command);
